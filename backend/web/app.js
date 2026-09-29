@@ -6,7 +6,7 @@
 
 // Application State
 const state = {
-  backendUrl: "http://localhost:8001",
+  backendUrl: "https://aquaprotect-ai.onrender.com",
   activeTab: "tab-waterfall",
   surveyMode: "missions",
   currentMissionKey: "mission_chennai_niot",
@@ -68,15 +68,18 @@ async function initBackendDiscovery() {
   if (storedUrl) {
     state.backendUrl = storedUrl;
     customUrlInput.value = storedUrl;
+  } else {
+    customUrlInput.value = state.backendUrl;
   }
 
   // Candidate URLs
   const candidateUrls = [
-    window.location.origin,
+    "https://aquaprotect-ai.onrender.com",
     state.backendUrl,
-    "http://localhost:8001",
-    "http://127.0.0.1:8001",
-    "http://localhost:8000"
+    window.location.origin,
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8001"
   ];
 
   for (const url of candidateUrls) {
