@@ -1,7 +1,12 @@
+# AquaProtect-AI: Unified Dependencies (FastAPI + Streamlit + PyTorch + Hydroacoustics)
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
 torch>=2.0.0
 torchvision>=0.15.0
 numpy>=1.24.0
-opencv-python>=4.8.0
+opencv-python-headless>=4.8.0
 pandas>=2.0.0
 matplotlib>=3.7.0
 scipy>=1.10.0
@@ -10,3 +15,7 @@ folium>=0.16.0
 reportlab>=4.0.0
 Pillow>=10.0.0
 plotly>=5.15.0
+pyyaml>=6.0
+onnx>=1.14.0
+onnxruntime>=1.15.0
+requests>=2.28.0

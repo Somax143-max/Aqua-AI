@@ -1,0 +1,42 @@
+# AquaProtect-AI: Render Blueprint Specification
+# Deploys both FastAPI Backend and Streamlit Frontend seamlessly on Render
+
+services:
+  # -------------------------------------------------------------
+  # 1. AquaProtect-AI: FastAPI Microservice Backend
+  # -------------------------------------------------------------
+  - type: web
+    name: aqua-ai-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: python -m uvicorn backend.api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+
+  # -------------------------------------------------------------
+  # 2. AquaProtect-AI: Streamlit Marine Command Center Frontend
+  # -------------------------------------------------------------
+  - type: web
+    name: aqua-ai-frontend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r frontend/requirements.txt
+    startCommand: python -m streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.enableCORS false --server.enableXsrfProtection false
+    healthCheckPath: /_stcore/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: aqua-ai-backend
+          property: host

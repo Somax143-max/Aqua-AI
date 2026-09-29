@@ -17,7 +17,7 @@ def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
         return s.connect_ex((host, port)) == 0
 
 def find_available_port(default_port: int = 8000, fallback_ports=(8001, 8002, 8088, 8888)) -> int:
-    env_port = os.environ.get("BACKEND_PORT")
+    env_port = os.environ.get("PORT") or os.environ.get("BACKEND_PORT")
     if env_port:
         return int(env_port)
     

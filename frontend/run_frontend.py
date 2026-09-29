@@ -13,7 +13,7 @@ import subprocess
 def main():
     frontend_dir = os.path.dirname(os.path.abspath(__file__))
     app_path = os.path.join(frontend_dir, "app.py")
-    port = os.environ.get("FRONTEND_PORT", "8501")
+    port = os.environ.get("PORT") or os.environ.get("FRONTEND_PORT", "8501")
     
     print("=" * 70)
     print("  AquaProtect-AI: Marine Command Center UI Dashboard")
