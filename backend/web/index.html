@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaProtect-AI | MoES NIOT Sonar Command Center</title>
+  
+  <!-- Oceanographic Research Lab Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- FontAwesome & Mapping/3D CDNs -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.29.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- Left Sidebar: Survey Operations & Acoustic Settings -->
+  <aside id="sidebar">
+    <div class="brand-section">
+      <div class="brand-title">AquaProtect-AI</div>
+      <div class="brand-sub">MoES / NIOT &bull; SIH26057</div>
+      <div class="badge-defense">DEFENSE EDITION v2.2</div>
+    </div>
+
+    <!-- Survey Operations -->
+    <div class="sidebar-heading">Survey Operations</div>
+    <div class="radio-group">
+      <label class="radio-option selected" id="opt-missions">
+        <input type="radio" name="survey_mode" value="missions" checked>
+        <span>Pre-Configured Indian Maritime Missions</span>
+      </label>
+      <label class="radio-option" id="opt-image">
+        <input type="radio" name="survey_mode" value="image">
+        <span>Upload Sonar Image / Waterfall</span>
+      </label>
+      <label class="radio-option" id="opt-pings">
+        <input type="radio" name="survey_mode" value="pings">
+        <span>Upload Ping Navigation CSV</span>
+      </label>
+    </div>
+
+    <!-- Dynamic Upload Container -->
+    <div id="upload-panel" style="display: none; margin-bottom: 14px;">
+      <div class="form-group" id="image-upload-group">
+        <label class="form-label">Upload Waterfall Strip (PNG, JPG, TIF):</label>
+        <input type="file" id="sonar-file-input" class="input-control" accept="image/*,.tif,.tiff">
+      </div>
+      <div class="form-group" id="ping-upload-group" style="display: none;">
+        <label class="form-label">Upload Hydrographic Telemetry (CSV, TXT):</label>
+        <input type="file" id="ping-file-input" class="input-control" accept=".csv,.txt">
+      </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 12px 0;">
+
+    <!-- Acoustic Physics & Filter Settings -->
+    <div class="sidebar-heading">Acoustic Physics & Filter Settings</div>
+    
+    <div class="form-group">
+      <label class="form-label">Acoustic Speckle Filter:</label>
+      <select id="filter-type" class="select-control">
+        <option value="lee" selected>Lee Filter (Acoustic Coherent)</option>
+        <option value="frost">Frost Filter (Exponential Damping)</option>
+        <option value="clahe_only">CLAHE Dynamic Balancing Only</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Sonar Color Palette:</label>
+      <select id="cmap-select" class="select-control">
+        <option value="bronze" selected>Bronze (Klein/EdgeTech Standard)</option>
+        <option value="amber">Amber (High-Contrast Acoustic)</option>
+        <option value="copper">Copper (Deep Trench Relief)</option>
+        <option value="cyan">Cyan (Naval Hydrography)</option>
+        <option value="grayscale">Grayscale (Monochromatic)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Detection Confidence Threshold: <span id="conf-val" style="color: var(--accent-teal); font-weight: 700;">0.45</span></label>
+      <input type="range" id="conf-slider" min="0.30" max="0.90" step="0.05" value="0.45" style="width: 100%; accent-color: var(--accent-teal);">
+    </div>
+
+    <div class="toggle-group">
+      <div class="toggle-item">
+        <span>Slant-to-Ground Range (SRC)</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-src" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <span>Towfish Motion Dynamics & Inpainting</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-motion" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <span>Bayesian Epistemic Uncertainty (15 MC)</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-bayes">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <span>Display Natural Seafloor (Class 6)</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-benthos">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Backend Configuration Modal Trigger -->
+    <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid var(--border-color);">
+      <div style="font-size: 0.72rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center;">
+        <span>API Endpoint:</span>
+        <span id="api-status-badge" style="font-weight: 700; color: var(--status-success);">CONNECTING...</span>
+      </div>
+      <input type="text" id="backend-url-input" class="input-control" value="http://localhost:8001" style="font-size: 0.72rem; margin-top: 4px; padding: 4px 8px;">
+    </div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main id="main-container">
+    
+    <!-- Header Section -->
+    <header class="main-header">
+      <div class="header-left">
+        <h1>AquaProtect-AI: Autonomous Marine Debris Command Center</h1>
+        <p>National Institute of Ocean Technology (NIOT) &bull; Ministry of Earth Sciences (MoES) &bull; Deep Ocean Mission</p>
+      </div>
+      <div class="header-right">
+        <div class="badge-connected" id="header-conn-badge">API CONNECTED</div>
+        <div class="header-subtext" id="header-conn-sub">REST: http://localhost:8001 &bull; Stage-1 Gate Active</div>
+      </div>
+    </header>
+
+    <!-- Content Body -->
+    <div class="content-body">
+      
+      <!-- Zone Selector Bar -->
+      <div class="controls-bar" id="mission-bar">
+        <div class="mission-select-container">
+          <label class="form-label">Select Maritime Survey Zone:</label>
+          <select id="mission-select" class="select-control">
+            <option value="mission_chennai_niot">1. Bay of Bengal (Chennai Offshore - NIOT Mooring Testbed)</option>
+            <option value="mission_mumbai_high">2. Arabian Sea (Mumbai High Shipping Corridor)</option>
+            <option value="mission_gulf_mannar">3. Palk Strait (Gulf of Mannar Coral Biosphere)</option>
+            <option value="mission_andaman_trench">4. Andaman & Nicobar Trench (Deep Ocean Mission)</option>
+            <option value="mission_cochin_harbor">5. Cochin International Shipping Channel (Harbour Fairway)</option>
+          </select>
+        </div>
+        <button id="btn-run-detect" class="btn-primary" style="margin-top: 20px;">
+          <i class="fa-solid fa-satellite-dish"></i> Execute Sonar Scan
+        </button>
+      </div>
+      <div id="mission-description" style="font-size: 0.78rem; color: var(--text-secondary); margin-top: -6px;">
+        Loading mission operational synopsis...
+      </div>
+
+      <!-- Tactical Metrics Row: Triage & Model Configuration -->
+      <div class="metrics-row">
+        <!-- Sonar Detection Triage Card -->
+        <div class="metric-card">
+          <div class="card-title">Sonar Detection Triage</div>
+          <div class="triage-grid">
+            <div>
+              <div class="triage-stat stat-critical">AI-Detected Object Candidates: <strong id="stat-critical-count">3</strong></div>
+              <div class="triage-stat stat-natural">Natural Seafloor: <strong id="stat-natural-count">12</strong></div>
+              <div class="triage-stat stat-review">Needs Review (ABSTAIN): <strong id="stat-abstain-count">0</strong></div>
+              <div class="triage-stat stat-retained">Stage-1 Retained: <strong id="stat-retained-count">3</strong></div>
+              
+              <div id="critical-list" style="margin: 8px 0; font-size: 0.75rem; color: var(--status-warning);">
+                <!-- Dynamic High Priority List -->
+              </div>
+
+              <div class="filter-meta">
+                <strong style="color: var(--accent-teal);">Stage-1 Natural Benthos Filter</strong><br>
+                Candidates examined: <span id="meta-examined">15</span> &bull; Rejected: <span id="meta-rejected">12</span> &bull; Retained: <span id="meta-retained">3</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="detected-classes-box">
+                <h4>Detected Classes</h4>
+                <div id="class-counts-container">
+                  <div>Ghost Net: 1</div>
+                  <div>Pipeline/Cable: 1</div>
+                  <div>Metal Drum: 1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Configuration Card -->
+        <div class="metric-card">
+          <div class="card-title">Model Configuration</div>
+          <div class="model-config-val" id="model-acc-val">Internal Test Accuracy: 94.2%*</div>
+          <div class="model-config-sub">
+            Dataset: Synthetic/Development Data<br>
+            *Demo/internal test split — not field validation
+          </div>
+          <div class="model-config-sub" style="border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px;">
+            Weights loaded: 100%<br>
+            Model: v2.2-Defense-scSE<br>
+            Inference: <span id="model-fps-val" style="font-weight: 700; color: var(--accent-teal);">34.2 FPS</span> (<span id="model-lat-val">29.2 ms</span>)
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="tab-waterfall"><i class="fa-solid fa-water"></i> Sonar Waterfall</button>
+        <button class="tab-btn" data-tab="tab-map"><i class="fa-solid fa-map-location-dot"></i> Geotagged Hazard Map</button>
+        <button class="tab-btn" data-tab="tab-bathymetry"><i class="fa-solid fa-cube"></i> 3D Bathymetry & DEM</button>
+        <button class="tab-btn" data-tab="tab-sounder"><i class="fa-solid fa-volume-high"></i> Bridge Sounder</button>
+        <button class="tab-btn" data-tab="tab-drift"><i class="fa-solid fa-compass"></i> Hydrodynamic Drift (48h)</button>
+        <button class="tab-btn" data-tab="tab-self-correct"><i class="fa-solid fa-rotate"></i> Continuous Self-Correction</button>
+        <button class="tab-btn" data-tab="tab-reports"><i class="fa-solid fa-file-pdf"></i> Survey Reports</button>
+      </div>
+
+      <!-- TAB 1: Sonar Waterfall Display & Detections List -->
+      <div class="tab-content active" id="tab-waterfall">
+        <div class="waterfall-viewer">
+          <canvas id="waterfall-canvas"></canvas>
+          <div class="waterfall-overlay-info" id="waterfall-info">
+            Swath Width: 150m (Dual Channel) &bull; Range: 75m &bull; Frequency: 450 kHz
+          </div>
+        </div>
+
+        <table class="detections-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Class Name</th>
+              <th>Severity</th>
+              <th>Confidence</th>
+              <th>Acoustic Material</th>
+              <th>Geotag (WGS-84)</th>
+              <th>Physical Dimensions</th>
+            </tr>
+          </thead>
+          <tbody id="detections-tbody">
+            <!-- Dynamic Detections -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TAB 2: Geotagged Leaflet Ocean Map -->
+      <div class="tab-content" id="tab-map">
+        <div id="map-container"></div>
+      </div>
+
+      <!-- TAB 3: 3D Bathymetry & Elevation Model -->
+      <div class="tab-content" id="tab-bathymetry">
+        <div id="bathymetry-3d-canvas"></div>
+      </div>
+
+      <!-- TAB 4: Tactical Bridge Sounder & Audio Ping Synthesizer -->
+      <div class="tab-content" id="tab-sounder">
+        <div style="text-align: center; padding: 24px;">
+          <h3 style="color: var(--accent-deep); margin-bottom: 8px;">Acoustic Bridge Sounder & Synthesizer</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 16px;">Generates Doppler-shifted hydrophone acoustic chirp returns for detected subsea obstacles.</p>
+          <button id="btn-play-sounder" class="btn-primary" style="padding: 10px 24px; font-size: 0.95rem;">
+            <i class="fa-solid fa-play"></i> Emit Acoustic Ping Chirp
+          </button>
+          <div id="sounder-log" style="margin-top: 16px; font-size: 0.8rem; color: var(--accent-teal);">
+            Sounder status: Standby
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: Hydrodynamic Drift Projection -->
+      <div class="tab-content" id="tab-drift">
+        <div id="drift-plot" style="height: 440px; width: 100%;"></div>
+      </div>
+
+      <!-- TAB 6: Continuous Self-Correction Loop -->
+      <div class="tab-content" id="tab-self-correct">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="color: var(--accent-deep);">Autonomous Closed-Loop Self-Correction</h3>
+            <p style="color: var(--text-secondary); font-size: 0.82rem;">Trains and recalibrates acoustic neural weights dynamically upon detecting discrepancies.</p>
+          </div>
+          <button id="btn-trigger-training" class="btn-primary">
+            <i class="fa-solid fa-bolt"></i> Trigger Iterative Correction Batch (5 Cycles)
+          </button>
+        </div>
+
+        <div class="training-box">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+            <div class="metric-card">
+              <div class="card-title">Cycles Executed</div>
+              <div class="model-config-val" id="train-cycles">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="card-title">Samples Scanned</div>
+              <div class="model-config-val" id="train-samples">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="card-title">Errors Corrected</div>
+              <div class="model-config-val" style="color: var(--status-critical);" id="train-errors">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="card-title">Refined Accuracy</div>
+              <div class="model-config-val" style="color: var(--status-success);" id="train-accuracy">--</div>
+            </div>
+          </div>
+
+          <div class="training-log-console" id="training-console">
+            [AQUAPROTECT-AI] Continuous Self-Correction Engine Initialized. Ready for training iterations.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: Automated Survey Reports -->
+      <div class="tab-content" id="tab-reports">
+        <h3 style="color: var(--accent-deep); margin-bottom: 8px;">Certified Oceanographic Survey Reports</h3>
+        <p style="color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 20px;">Generate and download certified MoES / NIOT hydrographic reports and IHO S-57 ENC layers.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          <div class="metric-card" style="text-align: center;">
+            <i class="fa-solid fa-file-pdf" style="font-size: 2.2rem; color: #DC4C4C; margin-bottom: 12px;"></i>
+            <h4 style="color: var(--accent-deep); margin-bottom: 6px;">MoES Certified PDF</h4>
+            <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 14px;">Includes high-res acoustic crops, GPS fixes, and surveyor signature blocks.</p>
+            <button class="btn-primary" id="btn-export-pdf"><i class="fa-solid fa-download"></i> Generate PDF Report</button>
+          </div>
+
+          <div class="metric-card" style="text-align: center;">
+            <i class="fa-solid fa-map" style="font-size: 2.2rem; color: #087E8B; margin-bottom: 12px;"></i>
+            <h4 style="color: var(--accent-deep); margin-bottom: 6px;">IHO S-57 ENC Layer</h4>
+            <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 14px;">Vector chart layer with standard maritime symbology (WRECKS, OBSTRN).</p>
+            <button class="btn-primary" id="btn-export-s57"><i class="fa-solid fa-download"></i> Export S-57 ENC</button>
+          </div>
+
+          <div class="metric-card" style="text-align: center;">
+            <i class="fa-solid fa-database" style="font-size: 2.2rem; color: #1769AA; margin-bottom: 12px;"></i>
+            <h4 style="color: var(--accent-deep); margin-bottom: 6px;">JSON & CSV GIS Export</h4>
+            <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 14px;">Raw structured telemetry and bounding boxes for GIS databases.</p>
+            <button class="btn-secondary" id="btn-export-json"><i class="fa-solid fa-download"></i> Download JSON</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Master JavaScript Application -->
+  <script src="app.js"></script>
+</body>
+</html>

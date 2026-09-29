@@ -24,10 +24,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Query, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Query, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+# Locate static web application directory (HTML5/CSS/JS frontend)
+web_dir = os.path.join(BASE_DIR, "web") if os.path.exists(os.path.join(BASE_DIR, "web")) else os.path.abspath(os.path.join(BASE_DIR, "..", "frontend", "web"))
 
 # Core Hydroacoustic & AI Modules
 from core.sonar_physics import SonarPhysics
@@ -161,12 +165,17 @@ class ReportGenerateRequest(BaseModel):
 # ---------------------------------------------------------------------------
 
 @app.get("/")
-def root_info():
-    """Root info endpoint."""
+def root_info(request: Request):
+    """Root info endpoint. Serves web dashboard if requested from browser."""
+    accept = request.headers.get("accept", "")
+    index_file = os.path.join(web_dir, "index.html")
+    if "text/html" in accept and os.path.exists(index_file):
+        return FileResponse(index_file)
     return {
         "system": "AquaProtect-AI Defense Edition v2.2",
         "organization": "National Institute of Ocean Technology (NIOT) / MoES",
         "status": "ONLINE",
+        "web_dashboard": "/web",
         "endpoints": {
             "health": "/health",
             "documentation": "/docs",
@@ -179,6 +188,9 @@ def root_info():
             "reports": "/api/reports/generate"
         }
     }
+
+if os.path.exists(web_dir):
+    app.mount("/web", StaticFiles(directory=web_dir, html=True), name="web")
 
 
 @app.get("/health")
