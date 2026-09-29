@@ -1,0 +1,2 @@
+# Fallback requirements reference for Render nested cwd
+-r ../requirements.txt
