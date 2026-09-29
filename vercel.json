@@ -1,44 +1,9 @@
 {
-  "version": 2,
-  "name": "aquaprotect-ai",
-  "builds": [
+  "cleanUrls": true,
+  "rewrites": [
     {
-      "src": "frontend/web/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/health",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/docs(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/openapi.json",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/style.css",
-      "dest": "/frontend/web/style.css"
-    },
-    {
-      "src": "/app.js",
-      "dest": "/frontend/web/app.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/web/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
