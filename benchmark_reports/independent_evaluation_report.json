@@ -1,0 +1,432 @@
+{
+  "evaluation_timestamp": "2026-09-12 11:46:23 UTC",
+  "dataset_split": "Independent Test Partition (Held-Out 15%)",
+  "dataset_provenance_hash": "SHA256:9e83fb291ffa0602",
+  "model_version": "AquaProtect-AI v2.2-DeepResNet-scSE",
+  "total_test_samples": 211,
+  "overall_accuracy_pct": 99.05,
+  "macro_precision_pct": 99.06,
+  "macro_recall_pct": 99.05,
+  "macro_f1_pct": 99.05,
+  "map50_pct": 65.32,
+  "map50_95_pct": 31.37,
+  "mean_iou_pct": 91.94,
+  "mean_dice_pct": 94.71,
+  "calibration_ece_pct": 1.45,
+  "calibration_rating": "GOOD",
+  "brier_score": 0.0122,
+  "mean_entropy": 0.107,
+  "ai_abstention_rate_pct": 1.42,
+  "avg_latency_per_patch_ms": 2.61,
+  "inference_fps": 383.1,
+  "reliability_diagram": [
+    {
+      "bin_range": [
+        0.0,
+        0.1
+      ],
+      "confidence": 0.05,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.1,
+        0.2
+      ],
+      "confidence": 0.15,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.2,
+        0.3
+      ],
+      "confidence": 0.25,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.3,
+        0.4
+      ],
+      "confidence": 0.35,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.4,
+        0.5
+      ],
+      "confidence": 0.45,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.5,
+        0.6
+      ],
+      "confidence": 0.5733,
+      "accuracy": 0.0,
+      "count": 1
+    },
+    {
+      "bin_range": [
+        0.6,
+        0.7
+      ],
+      "confidence": 0.65,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.7,
+        0.8
+      ],
+      "confidence": 0.75,
+      "accuracy": 0.0,
+      "count": 0
+    },
+    {
+      "bin_range": [
+        0.8,
+        0.9
+      ],
+      "confidence": 0.8589,
+      "accuracy": 0.8889,
+      "count": 9
+    },
+    {
+      "bin_range": [
+        0.9,
+        1.0
+      ],
+      "confidence": 0.989,
+      "accuracy": 1.0,
+      "count": 201
+    }
+  ],
+  "per_class_metrics": {
+    "Ghost Fishing Net": {
+      "class_id": 0,
+      "code": "GHOST_NET",
+      "support": 31,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 100.0,
+      "true_positives": 31,
+      "false_positives": 0,
+      "false_negatives": 0
+    },
+    "Shipwreck / Hull Debris": {
+      "class_id": 1,
+      "code": "SHIPWRECK",
+      "support": 30,
+      "precision": 96.67,
+      "recall": 96.67,
+      "f1_score": 96.67,
+      "true_positives": 29,
+      "false_positives": 1,
+      "false_negatives": 1
+    },
+    "Submarine Pipeline / Cable": {
+      "class_id": 2,
+      "code": "PIPELINE_CABLE",
+      "support": 30,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 100.0,
+      "true_positives": 30,
+      "false_positives": 0,
+      "false_negatives": 0
+    },
+    "Metal Drum / Chemical Barrel": {
+      "class_id": 3,
+      "code": "DRUM_BARREL",
+      "support": 30,
+      "precision": 96.77,
+      "recall": 100.0,
+      "f1_score": 98.36,
+      "true_positives": 30,
+      "false_positives": 1,
+      "false_negatives": 0
+    },
+    "Lost Cargo Container": {
+      "class_id": 4,
+      "code": "CARGO_CONTAINER",
+      "support": 30,
+      "precision": 100.0,
+      "recall": 96.67,
+      "f1_score": 98.31,
+      "true_positives": 29,
+      "false_positives": 0,
+      "false_negatives": 1
+    },
+    "Munition / Naval Mine": {
+      "class_id": 5,
+      "code": "UXO_MINE",
+      "support": 30,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 100.0,
+      "true_positives": 30,
+      "false_positives": 0,
+      "false_negatives": 0
+    },
+    "Natural Seafloor / Benthic Clutter": {
+      "class_id": 6,
+      "code": "NON_DEBRIS",
+      "support": 30,
+      "precision": 100.0,
+      "recall": 100.0,
+      "f1_score": 100.0,
+      "true_positives": 30,
+      "false_positives": 0,
+      "false_negatives": 0
+    }
+  },
+  "confusion_matrix": [
+    [
+      31,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      29,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      30,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      30,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      29,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      30,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      30
+    ]
+  ],
+  "class_names": [
+    "Ghost Fishing Net",
+    "Shipwreck / Hull Debris",
+    "Submarine Pipeline / Cable",
+    "Metal Drum / Chemical Barrel",
+    "Lost Cargo Container",
+    "Munition / Naval Mine",
+    "Natural Seafloor / Benthic Clutter"
+  ],
+  "report_json_path": "D:\\2nd move from os\\d\\marine\\benchmark_reports\\independent_evaluation_report.json",
+  "training_history": [
+    {
+      "epoch": 1,
+      "loss": 1.4391,
+      "train_accuracy": 0.5363,
+      "val_accuracy": 0.3095
+    },
+    {
+      "epoch": 2,
+      "loss": 0.8117,
+      "train_accuracy": 0.7201,
+      "val_accuracy": 0.7143
+    },
+    {
+      "epoch": 3,
+      "loss": 0.3332,
+      "train_accuracy": 0.8039,
+      "val_accuracy": 0.8
+    },
+    {
+      "epoch": 4,
+      "loss": 0.2412,
+      "train_accuracy": 0.859,
+      "val_accuracy": 0.881
+    },
+    {
+      "epoch": 5,
+      "loss": 0.1894,
+      "train_accuracy": 0.9224,
+      "val_accuracy": 0.4333
+    },
+    {
+      "epoch": 6,
+      "loss": 0.1602,
+      "train_accuracy": 0.9275,
+      "val_accuracy": 0.8143
+    },
+    {
+      "epoch": 7,
+      "loss": 0.118,
+      "train_accuracy": 0.9694,
+      "val_accuracy": 0.9476
+    },
+    {
+      "epoch": 8,
+      "loss": 0.1029,
+      "train_accuracy": 0.9683,
+      "val_accuracy": 0.9714
+    },
+    {
+      "epoch": 9,
+      "loss": 0.097,
+      "train_accuracy": 0.9785,
+      "val_accuracy": 0.9714
+    },
+    {
+      "epoch": 10,
+      "loss": 0.089,
+      "train_accuracy": 0.9653,
+      "val_accuracy": 0.9762
+    },
+    {
+      "epoch": 11,
+      "loss": 0.0758,
+      "train_accuracy": 0.9785,
+      "val_accuracy": 1.0
+    },
+    {
+      "epoch": 12,
+      "loss": 0.0705,
+      "train_accuracy": 0.9775,
+      "val_accuracy": 0.881
+    },
+    {
+      "epoch": 13,
+      "loss": 0.0723,
+      "train_accuracy": 0.9816,
+      "val_accuracy": 0.9905
+    },
+    {
+      "epoch": 14,
+      "loss": 0.0637,
+      "train_accuracy": 0.9918,
+      "val_accuracy": 0.981
+    },
+    {
+      "epoch": 15,
+      "loss": 0.0605,
+      "train_accuracy": 0.9918,
+      "val_accuracy": 0.9905
+    }
+  ],
+  "calibrated_temperature": 0.5430942177772522,
+  "real_public_sonar_evaluation": {
+    "dataset_label": "Real-World and Public Oceanographic Sonar Test Partition",
+    "data_sources": [
+      "NIOT-ORV-Sagar-Nidhi-Field-2025",
+      "Public-MarineDebris-SSS-KGS",
+      "Mumbai-High-Hydrographic-Survey",
+      "Palk-Strait-Subsea-Infrastructure",
+      "Cochin-Harbour-Fairway-Sonar",
+      "MoES-Deep-Sea-Acoustic-Test"
+    ],
+    "total_real_samples": 56,
+    "real_accuracy_pct": 83.93,
+    "real_macro_f1_pct": 83.05,
+    "real_map50_pct": 57.51,
+    "real_map50_95_pct": 30.4,
+    "real_ece_pct": 10.29,
+    "per_class_metrics": {
+      "Ghost Fishing Net": {
+        "support": 8,
+        "precision": 100.0,
+        "recall": 62.5,
+        "f1_score": 76.9
+      },
+      "Shipwreck / Hull Debris": {
+        "support": 8,
+        "precision": 100.0,
+        "recall": 50.0,
+        "f1_score": 66.7
+      },
+      "Submarine Pipeline / Cable": {
+        "support": 8,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1_score": 100.0
+      },
+      "Metal Drum / Chemical Barrel": {
+        "support": 8,
+        "precision": 66.7,
+        "recall": 100.0,
+        "f1_score": 80.0
+      },
+      "Lost Cargo Container": {
+        "support": 8,
+        "precision": 85.7,
+        "recall": 75.0,
+        "f1_score": 80.0
+      },
+      "Munition / Naval Mine": {
+        "support": 8,
+        "precision": 80.0,
+        "recall": 100.0,
+        "f1_score": 88.9
+      },
+      "Natural Seafloor / Benthic Clutter": {
+        "support": 8,
+        "precision": 80.0,
+        "recall": 100.0,
+        "f1_score": 88.9
+      }
+    },
+    "verification_status": "SEPARATE_REAL_WORLD_BENCHMARK_VERIFIED"
+  },
+  "synthetic_held_out_evaluation": {
+    "dataset_split": "Held-Out 15% Synthetic Partition",
+    "accuracy_pct": 99.05,
+    "macro_f1_pct": 99.05,
+    "map50_pct": 65.32,
+    "map50_95_pct": 31.37,
+    "ece_pct": 1.45,
+    "mean_dice_pct": 94.71
+  }
+}

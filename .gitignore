@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Virtualenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+*/.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+.cache
+tests_output/
+*/tests_output/
+reports_output/
+*/reports_output/
+
+# Temporary and test outputs
+test_model.onnx
+test_model.onnx.data
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/

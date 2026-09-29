@@ -1,0 +1,45 @@
+{
+  "digital_twin_id": "DT-NIOT-CHENNAI-SEABED",
+  "geographic_zone": "Chennai Offshore Continental Shelf (NIOT Survey Sector A)",
+  "bounding_box": {
+    "min_lat": 13.06,
+    "max_lat": 13.11,
+    "min_lon": 80.25,
+    "max_lon": 80.32
+  },
+  "survey_epochs": [
+    {
+      "epoch_id": "EPOCH-2025",
+      "year": 2025,
+      "vessel": "ORV Sagar Nidhi",
+      "total_targets_detected": 14,
+      "ghost_nets": 4,
+      "munitions": 2,
+      "drums": 3,
+      "wrecks": 2,
+      "pipelines": 3
+    },
+    {
+      "epoch_id": "EPOCH-2026",
+      "year": 2026,
+      "vessel": "ORV Sagar Kanya",
+      "total_targets_detected": 18,
+      "new_debris": 5,
+      "recovered_debris": 3,
+      "persistent_debris": 11,
+      "moved_debris": 2
+    },
+    {
+      "epoch_id": "EPOCH-2027-PLANNED",
+      "year": 2027,
+      "vessel": "Autonomous Survey Glider Fleet",
+      "status": "SCHEDULED_RESCUE_SORTIE"
+    }
+  ],
+  "remediation_metrics": {
+    "initial_hazard_volume_m3": 450.0,
+    "current_hazard_volume_m3": 380.0,
+    "cleanup_efficiency_pct": 15.5,
+    "ghost_net_cleared_kg": 2400.0
+  }
+}

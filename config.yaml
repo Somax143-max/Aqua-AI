@@ -1,0 +1,51 @@
+# ==============================================================================
+# AquaProtect-AI: Centralized System Configuration (SIH26057 - MoES/NIOT)
+# ==============================================================================
+
+system:
+  project_name: "AquaProtect-AI"
+  organization: "National Institute of Ocean Technology (NIOT) / MoES"
+  version: "v2.2-Defense-Edition"
+  device: "auto" # "cuda", "cpu", or "auto"
+
+thresholds:
+  confidence_detection_threshold: 0.45
+  nms_iou_threshold: 0.35
+  min_target_area_px: 110
+  nadir_exclusion_width_ratio: 0.08
+  mc_dropout_eval_samples: 15
+  mc_dropout_deep_samples: 20
+
+abstention:
+  variance_threshold: 0.040
+  entropy_threshold: 1.38
+  min_confidence: 0.42
+  default_action: "FLAG_FOR_OPERATOR_VERIFICATION"
+
+physics_ahsa:
+  min_highlight_intensity: 140
+  max_shadow_intensity: 60
+  min_shadow_length_px: 6
+  ahsa_confidence_floor: 0.30
+  weight_neural: 0.60
+  weight_physics: 0.25
+  weight_image_quality: 0.15
+  epistemic_penalty: 1.5
+
+oceanography:
+  surface_sound_speed_mps: 1540.0
+  surface_temperature_c: 28.5
+  surface_salinity_ppt: 34.8
+  salvage_deck_area_m2: 200.0
+
+preprocessing:
+  default_filter: "lee"
+  clahe_clip_limit: 2.5
+  clahe_tile_grid: [8, 8]
+  motion_dropout_fill_limit_px: 12
+
+paths:
+  models_output: "models_output"
+  best_weights: "models_output/best_sonar_model.pt"
+  benchmark_reports: "benchmark_reports"
+  evaluation_report_json: "benchmark_reports/independent_evaluation_report.json"
