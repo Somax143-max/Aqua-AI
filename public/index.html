@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaProtect-AI &bull; Autonomous Marine Debris Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a1118;
+            --bg-secondary: #0f1c29;
+            --card-bg: rgba(18, 34, 49, 0.7);
+            --card-border: rgba(41, 128, 185, 0.25);
+            --accent-cyan: #00d2ff;
+            --accent-teal: #00e5a3;
+            --accent-amber: #f39c12;
+            --text-main: #f0f6fc;
+            --text-muted: #8b9eb0;
+            --badge-bg: rgba(0, 229, 163, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top right, #0d233a 0%, #081119 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(0, 210, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .badge-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--badge-bg);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+            color: var(--accent-teal);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-teal);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .subheading {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* Card Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 210, 255, 0.5);
+            box-shadow: 0 12px 30px rgba(0, 210, 255, 0.1);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            color: var(--accent-cyan);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 22px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d2ff 0%, #0077b6 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.45);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+        }
+
+        /* API Tester Console */
+        .console-box {
+            background: #060b10;
+            border: 1px solid #1a2a3a;
+            border-radius: 14px;
+            padding: 24px;
+            margin-top: 30px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .console-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .console-title {
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .console-output {
+            background: #03070b;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #a0c4e2;
+            max-height: 220px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+
+    <div class="container">
+        <header>
+            <div class="badge-bar">
+                <span class="badge-dot"></span>
+                <span>MoES / NIOT &bull; Deep Ocean Mission SIH26057</span>
+            </div>
+            <h1>AquaProtect-AI</h1>
+            <p class="subheading">
+                Autonomous Marine Debris Detection, Hydroacoustic Physics Modeling, and Electronic Navigational Chart (IHO S-57) Command System.
+            </p>
+        </header>
+
+        <div class="grid">
+            <!-- FastAPI Swagger Docs -->
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h2>Interactive REST API</h2>
+                <p>Explore live Swagger OpenAPI documentation for hydroacoustic ingestion, OOD validation, and neural debris detection.</p>
+                <a href="/docs" class="btn btn-primary" style="width: 100%;">Open Swagger Docs →</a>
+            </div>
+
+            <!-- ReDoc -->
+            <div class="card">
+                <div class="card-icon">📖</div>
+                <h2>ReDoc API Reference</h2>
+                <p>Standardized technical specification with schema models, acoustic calibration, and S-57 ENC export endpoints.</p>
+                <a href="/redoc" class="btn btn-outline" style="width: 100%;">Open ReDoc Specs →</a>
+            </div>
+
+            <!-- Health & Status -->
+            <div class="card">
+                <div class="card-icon">🛰️</div>
+                <h2>Telemetry & Health</h2>
+                <p>Verify edge sensor health, raytracer sound velocity profiles, and active multi-ping tracking engine.</p>
+                <button class="btn btn-outline" style="width: 100%;" onclick="checkApiHealth()">Test /health Endpoint</button>
+            </div>
+        </div>
+
+        <!-- Live API Console -->
+        <div class="console-box">
+            <div class="console-header">
+                <span class="console-title">🖥️ Live Serverless API Console</span>
+                <span id="api-status" style="font-size: 0.8rem; color: var(--accent-teal);">API Status: Ready</span>
+            </div>
+            <div id="console-log" class="console-output">Click "Test /health Endpoint" above or query sample missions below...</div>
+            <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 14px;" onclick="fetchMissions()">Query Pre-Configured Missions</button>
+                <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 14px;" onclick="checkDigitalTwin()">Query Seafloor Digital Twin</button>
+            </div>
+        </div>
+
+        <footer>
+            AquaProtect-AI &bull; National Institute of Ocean Technology (NIOT) &bull; Ministry of Earth Sciences (MoES)
+        </footer>
+    </div>
+
+    <script>
+        const logBox = document.getElementById('console-log');
+        const statusEl = document.getElementById('api-status');
+
+        async function checkApiHealth() {
+            statusEl.textContent = 'Testing /health...';
+            logBox.textContent = 'Sending GET /health ...';
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                statusEl.textContent = 'Status 200 OK';
+                statusEl.style.color = '#00e5a3';
+                logBox.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                statusEl.textContent = 'Error';
+                statusEl.style.color = '#ff6b6b';
+                logBox.textContent = 'Fetch failed: ' + err.message;
+            }
+        }
+
+        async function fetchMissions() {
+            statusEl.textContent = 'Querying /api/missions...';
+            logBox.textContent = 'Sending GET /api/missions ...';
+            try {
+                const res = await fetch('/api/missions');
+                const data = await res.json();
+                statusEl.textContent = 'Status 200 OK';
+                statusEl.style.color = '#00e5a3';
+                logBox.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                statusEl.textContent = 'Error';
+                statusEl.style.color = '#ff6b6b';
+                logBox.textContent = 'Fetch failed: ' + err.message;
+            }
+        }
+
+        async function checkDigitalTwin() {
+            statusEl.textContent = 'Querying /api/digital_twin/state...';
+            logBox.textContent = 'Sending GET /api/digital_twin/state ...';
+            try {
+                const res = await fetch('/api/digital_twin/state');
+                const data = await res.json();
+                statusEl.textContent = 'Status 200 OK';
+                statusEl.style.color = '#00e5a3';
+                logBox.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                statusEl.textContent = 'Error';
+                statusEl.style.color = '#ff6b6b';
+                logBox.textContent = 'Fetch failed: ' + err.message;
+            }
+        }
+
+        // Run auto health check on page load
+        window.addEventListener('DOMContentLoaded', checkApiHealth);
+    </script>
+</body>
+</html>
