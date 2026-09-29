@@ -11,7 +11,7 @@ Guarantees complete traceability and technical defensibility for every detection
 
 import time
 import hashlib
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 class DataProvenanceLedger:
     """

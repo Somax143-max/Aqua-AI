@@ -5,6 +5,7 @@ Unit and Integration Tests for AquaProtect-AI FastAPI Backend REST Service
 import os
 import sys
 import unittest
+from typing import Dict, Any, List, Optional
 import numpy as np
 import cv2
 from fastapi.testclient import TestClient
