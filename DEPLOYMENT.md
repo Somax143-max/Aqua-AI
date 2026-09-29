@@ -33,9 +33,9 @@ Render can deploy both the **FastAPI Backend** and the **Streamlit Frontend** si
 
 #### 1. Backend Web Service:
 - **Environment**: `Python 3`
-- **Root Directory**: `backend` (or leave empty)
-- **Build Command**: `pip install -r backend/requirements.txt`
-- **Start Command**: `python -m uvicorn backend.api:app --host 0.0.0.0 --port $PORT`
+- **Root Directory**: `backend`
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `python -m uvicorn api:app --host 0.0.0.0 --port $PORT`
 - **Health Check Path**: `/health`
 - **Environment Variables**:
   - `PYTHON_VERSION`: `3.11.9`
@@ -43,9 +43,9 @@ Render can deploy both the **FastAPI Backend** and the **Streamlit Frontend** si
 
 #### 2. Frontend Web Service:
 - **Environment**: `Python 3`
-- **Root Directory**: `frontend` (or leave empty)
-- **Build Command**: `pip install -r frontend/requirements.txt`
-- **Start Command**: `python -m streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.enableCORS false --server.enableXsrfProtection false`
+- **Root Directory**: `frontend`
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `python -m streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.enableCORS false --server.enableXsrfProtection false`
 - **Health Check Path**: `/_stcore/health`
 - **Environment Variables**:
   - `PYTHON_VERSION`: `3.11.9`
